@@ -203,3 +203,17 @@ socket.on('chatMessage', ({ id, name, message }) => {
     chatBox.removeChild(chatBox.firstChild);
   }
 });
+
+const muteToggle = document.getElementById('mute-toggle');
+const bgMusic = document.getElementById('bg-music');
+
+muteToggle.addEventListener('click', () => {
+  if (!bgMusic.dataset.started || bgMusic.dataset.started === "false") {
+    // music hasn't started yet
+    bgMusic.play().catch(() => {});
+    bgMusic.dataset.started = "true";
+  }
+
+  bgMusic.muted = !bgMusic.muted;
+  muteToggle.textContent = bgMusic.muted ? '🔇 Unmute' : '🔊 Mute';
+});
