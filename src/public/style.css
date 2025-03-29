@@ -88,6 +88,16 @@ body {
   text-align: center;
 }
 
+#timer.blink {
+  color: red;
+  animation: blink 1s step-start 0s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
 canvas {
   border: 4px solid #444;
   background: #98ff98;
@@ -104,6 +114,9 @@ canvas {
 
 #stats {
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 #scoreboard {
@@ -125,6 +138,51 @@ canvas {
   font-size: 14px;
 }
 
+#chat {
+  width: 200px;
+}
+
+#chat h3 {
+  margin-bottom: 8px;
+}
+
+#chat-messages {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  height: 150px;
+  overflow: hidden;
+  display: block;
+}
+
+#chat-messages div {
+  word-break: break-word;
+  white-space: pre-wrap;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.chat-name {
+  color: #0077b6;
+  font-weight: bold;
+}
+
+.me-name {
+  color: #ff6f00;
+}
+
+#chat-input {
+  width: 100%;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  resize: none;
+}
+
+/* End screen */
 #end-screen {
   position: fixed;
   top: 0;
@@ -150,6 +208,7 @@ canvas {
   50% { transform: translateY(-8px); }
 }
 
+/* Mute button */
 #mute-toggle {
   position: fixed;
   top: 10px;
@@ -160,4 +219,39 @@ canvas {
   padding: 5px 10px;
   font-size: 14px;
   cursor: pointer;
+}
+
+/* Support banner */
+#support-banner {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background: #f0f4ff;
+  border: 2px solid #0077b6;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #003566;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+#support-banner a {
+  text-decoration: none;
+  color: #0077b6;
+}
+
+#support-banner:hover {
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+.chat-name {
+  color: #0077b6; /* ocean blue */
+  font-weight: bold;
+}
+
+.me-name {
+  color: red; /* 🔴 your own name will be red */
 }

@@ -60,6 +60,12 @@
           <h3>🏆 Leaderboard</h3>
           <ul id="leaderboard"></ul>
         </div>
+
+        <div id="chat">
+          <h3>💬 Chat</h3>
+          <div id="chat-messages"></div>
+          <input id="chat-input" type="text" placeholder="Type a message..." maxlength="40" />
+        </div>
       </div>
     </div>
   </div>
@@ -75,6 +81,13 @@
     <source src="chicken-music.mp3" type="audio/mpeg" />
   </audio>
   <button id="mute-toggle">🔊 Mute</button>
+
+  <!-- 🧋 Support Banner -->
+  <div id="support-banner">
+    <a href="https://ko-fi.com/chickenchaos" target="_blank">
+      💙 Support me on Ko-fi
+    </a>
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="game.js"></script>

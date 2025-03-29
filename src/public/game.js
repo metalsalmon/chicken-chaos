@@ -16,12 +16,16 @@ const timerDisplay = document.getElementById('timer');
 const ammoDisplay = document.getElementById('ammo');
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
-const chickenImg = new Image();
-chickenImg.src = 'chicken-icon.png';
 
 const endScreen = document.getElementById('end-screen');
 const winnerMsg = document.getElementById('winner-msg');
 const countdownEl = document.getElementById('countdown');
+
+const chatInput = document.getElementById('chat-input');
+const chatBox = document.getElementById('chat-messages');
+
+const chickenImg = new Image();
+chickenImg.src = 'chicken-icon.png';
 
 canvas.addEventListener('mousemove', e => {
   const rect = canvas.getBoundingClientRect();
@@ -146,38 +150,25 @@ function render() {
 
   const now = Date.now();
   Object.entries(players).forEach(([id, p]) => {
-    let color = 'white';
-    const stunned = p.stunnedUntil && now < p.stunnedUntil;
-    const invincible = p.invincibleUntil && now < p.invincibleUntil;
-
-    if (id === myId) color = 'yellow';
-    else if (stunned) color = now % 400 < 200 ? 'white' : 'blue';
-    else if (invincible) color = 'cyan';
-
     const size = 24;
     ctx.save();
     ctx.translate(p.x, p.y);
-    
-    // Determine tint color
+
     let tint = null;
     if (id === myId) tint = 'yellow';
     else if (p.stunnedUntil && now < p.stunnedUntil) tint = 'blue';
     else if (p.invincibleUntil && now < p.invincibleUntil) tint = 'cyan';
-    
-    // Draw tint circle under image
+
     if (tint) {
       ctx.fillStyle = tint;
       ctx.beginPath();
       ctx.arc(0, 0, size / 1.8, 0, Math.PI * 2);
       ctx.fill();
     }
-    
-    // Draw chicken icon
+
     ctx.drawImage(chickenImg, -size / 2, -size / 2, size, size);
-    
     ctx.restore();
-    
-    // Draw name above
+
     ctx.fillStyle = 'black';
     ctx.fillText(p.name, p.x - 15, p.y - 20);
   });
@@ -187,3 +178,28 @@ function render() {
     `<li><strong>${i + 1}.</strong> ${p.name}: ${p.score}</li>`
   ).join('');
 }
+
+// CHAT HANDLING
+chatInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const msg = chatInput.value.trim();
+    if (msg) {
+      socket.emit('chatMessage', msg);
+      chatInput.value = '';
+    }
+  }
+});
+
+socket.on('chatMessage', ({ id, name, message }) => {
+  const el = document.createElement('div');
+  const isMine = id === myId;
+  const displayName = isMine ? 'me' : name;
+  const nameClass = isMine ? 'chat-name me-name' : 'chat-name';
+
+  el.innerHTML = `<span class="${nameClass}">${displayName}:</span> ${message}`;
+  chatBox.appendChild(el);
+
+  while (chatBox.children.length > 6) {
+    chatBox.removeChild(chatBox.firstChild);
+  }
+});

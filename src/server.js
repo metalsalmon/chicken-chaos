@@ -7,12 +7,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 const SPEED = 2.5;
 const GAME_DURATION = 120000; // 2 minutes
-const ROUND_DELAY = 10000;    // 10 seconds between rounds
+const ROUND_DELAY = 10000;    // 10 seconds
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -86,12 +86,22 @@ function updateGame() {
   const now = Date.now();
   const timeRemaining = Math.max(0, GAME_DURATION - (now - gameStartTime));
 
-  if (Math.random() < 0.002) {
+  if (Math.random() < 0.02) { // 🔼 increased spawn rate (was 0.002)
     const x = Math.random() * GAME_WIDTH;
     const y = Math.random() * GAME_HEIGHT;
+  
     if (!isCollidingWithObstacle(x, y, 10)) {
-      const type = Math.random() < 0.3 ? 'ammo' : 'power';
-      corn.push({ x, y, ammo: type === 'ammo', power: type === 'power' });
+      const roll = Math.random();
+      let newCorn = { x, y };
+  
+      if (roll < 0.1) {
+        newCorn.power = true; // 🌸 Pink corn (10% chance)
+      } else if (roll < 0.3) {
+        newCorn.ammo = true;  // 🔵 Blue corn (20% chance)
+      }
+      // Otherwise, yellow corn by default
+  
+      corn.push(newCorn);
     }
   }
 
@@ -155,38 +165,21 @@ function updateGame() {
     }
   }
 
-if (timeRemaining === 0 || corn.length === 0) {
-  clearInterval(gameInterval);
+  if (timeRemaining === 0 || corn.length === 0) {
+    clearInterval(gameInterval);
+    const sorted = Object.entries(players)
+      .map(([id, p]) => ({ id, name: p.name, score: p.score }))
+      .sort((a, b) => b.score - a.score);
+    const winner = sorted[0] || null;
 
-  const sorted = Object.entries(players)
-    .map(([id, p]) => ({ id, name: p.name, score: p.score }))
-    .sort((a, b) => b.score - a.score);
-  const winner = sorted[0] || null;
+    io.emit('endRound', { winner, countdown: 10 });
 
-  io.emit('endRound', { winner, countdown: 10 });
+    setTimeout(() => {
+      resetGame();
+    }, ROUND_DELAY);
 
-  setTimeout(() => {
-    resetGame(); // ✅ THIS LINE must be inside setTimeout
-  }, ROUND_DELAY);
-
-  return;
-}
-if (timeRemaining === 0 || corn.length === 0) {
-  clearInterval(gameInterval);
-
-  const sorted = Object.entries(players)
-    .map(([id, p]) => ({ id, name: p.name, score: p.score }))
-    .sort((a, b) => b.score - a.score);
-  const winner = sorted[0] || null;
-
-  io.emit('endRound', { winner, countdown: 10 });
-
-  setTimeout(() => {
-    resetGame(); // ✅ THIS LINE must be inside setTimeout
-  }, ROUND_DELAY);
-
-  return;
-}
+    return;
+  }
 
   io.emit('state', {
     players,
@@ -238,12 +231,25 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on('chatMessage', (message) => {
+    const player = players[socket.id];
+    if (!player) return;
+  
+    const safeMessage = message.substring(0, 40); // ✅ now it's defined
+  
+    io.emit('chatMessage', {
+      id: socket.id,
+      name: player.name,
+      message: safeMessage
+    });
+  });
+
   socket.on('disconnect', () => {
     delete players[socket.id];
   });
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Chicken Chaos server running at http://localhost:${PORT}`);
   resetGame();
 });
