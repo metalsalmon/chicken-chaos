@@ -235,7 +235,7 @@ io.on('connection', (socket) => {
     const player = players[socket.id];
     if (!player) return;
   
-    const safeMessage = message.substring(0, 40); // ✅ now it's defined
+    const safeMessage = message.substring(0, 40);
   
     io.emit('chatMessage', {
       id: socket.id,
