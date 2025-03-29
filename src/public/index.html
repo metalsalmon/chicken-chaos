@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🐔 Chicken Chaos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="start-screen">
+    <h1>🐔 Chicken Chaos</h1>
+    <div class="intro">
+      <p><strong>Goal:</strong> Run around the field collecting corn, spitting at other chickens, and getting the highest score before time runs out!</p>
+    </div>
+    <div class="controls">
+      <h3>🎮 How to Play</h3>
+      <ul>
+        <li><strong>Move:</strong> Hover your mouse around the field</li>
+        <li><strong>Spit:</strong> Click to shoot a spit (max 10 per round)</li>
+        <li><strong>💨 Spit Stun:</strong> Hitting a chicken stuns them for 2 seconds and makes them <span style="color: cyan;">invincible</span> for 1 second after</li>
+        <li><strong>Collect Corn:</strong> 
+          <ul>
+            <li><span style="color: gold;">● Yellow Corn</span> = +1 point</li>
+            <li><span style="color: deeppink;">● Pink Corn</span> = +5 points</li>
+            <li><span style="color: blue;">● Blue Corn</span> = +3 spits (refill)</li>
+          </ul>
+        </li>
+        <li><strong>Game Time:</strong> 1 minute per round. Everyone joins in real time!</li>
+      </ul>
+    </div>
+    <input id="name-input" type="text" placeholder="Enter your chicken name..." />
+    <button id="start-button">Start Clucking!</button>
+  </div>
+
+  <div id="game-ui" style="display:none;">
+    <div id="timer">Time Remaining: 60</div>
+    <div id="ammo">Spits Left: 10</div>
+  
+    <canvas id="game" width="800" height="600"></canvas>
+  
+    <div id="guide" style="margin-top: 20px; text-align: center; max-width: 600px;">
+      <h3>🕹️ Game Guide</h3>
+      <p><strong>Move:</strong> Hover your mouse • <strong>Click:</strong> Spit (max 10)</p>
+      <p>
+        <span style="color: gold;">● Yellow Corn</span> = +1 point &nbsp;|&nbsp;
+        <span style="color: deeppink;">● Pink Corn</span> = +5 points &nbsp;|&nbsp;
+        <span style="color: blue;">● Blue Corn</span> = +3 spits
+      </p>
+      <p>
+        💥 Hit a chicken with spit to <strong>stun</strong> them for 2 seconds.<br/>
+        😎 They become <span style="color: cyan;">invincible</span> for 1 second after.
+      </p>
+    </div>
+  
+    <div id="stats">
+      <div id="scoreboard">
+        <h3>🏆 Leaderboard</h3>
+        <ul id="leaderboard"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="end-screen" style="display:none;">
+    <img src="chicken.jpg" alt="Chicken"
+     id="chicken-img"
+     style="margin-top: 20px; width: 150px; border-radius: 10px;" />
+    <h2>Round Over!</h2>
+    <div id="winner-msg"></div>
+    <p>Next round starts in <span id="countdown">10</span> seconds...</p>
+  </div>
+
+  <audio id="bg-music" loop muted>
+    <source src="chicken-music.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+  
+  <button id="mute-toggle" style="position: absolute; top: 10px; left: 10px; z-index: 1000;">
+    🔊 Mute
+  </button>
+  
+  <script>
+    const music = document.getElementById('bg-music');
+    const muteBtn = document.getElementById('mute-toggle');
+  
+    muteBtn.onclick = () => {
+      music.muted = !music.muted;
+      muteBtn.textContent = music.muted ? '🔇 Unmute' : '🔊 Mute';
+    };
+  </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="game.js"></script>
+  
+</body>
+</html>
